@@ -134,11 +134,40 @@ public class StartActivityForResultsModule extends ReactContextBaseJavaModule {
                 return;
             }
 
-            Intent packageIntent = new Intent(stringArgument);
+            if (options.has("launchType")) {
+                String launchType = options.getString("launchType");
+                launchType = launchType.toUpperCase();
+
+                if(launchType.equals("PACKAGENAME")){
+                    Intent packageIntent = new Intent(stringArgument);
+                    packageIntent.putExtras(extras);
+                    Activity activity = getReactApplicationContext().getCurrentActivity();
+                    activity.startActivityForResult(packageIntent, requestCode);
+                    mPromises.put(requestCode, promise);
+                }
+                else if(launchType.equals("ACTIONNAME")){
+                    Intent packageIntent = new Intent();
+                    packageIntent.setAction(stringArgument);
+                    packageIntent.putExtras(extras);
+                    Activity activity = getReactApplicationContext().getCurrentActivity();
+                    activity.startActivityForResult(packageIntent, requestCode);
+                    mPromises.put(requestCode, promise);
+                }
+                else{
+                    promise.resolve(null);
+                    return;
+                }
+            }
+            else{
+                promise.resolve(null);
+                return;
+            }
+
+            /*Intent packageIntent = new Intent(stringArgument);
             packageIntent.putExtras(extras);
             Activity activity = getReactApplicationContext().getCurrentActivity();
             activity.startActivityForResult(packageIntent, requestCode);
-            mPromises.put(requestCode, promise);
+            mPromises.put(requestCode, promise);*/
             
         } catch (JSONException e) {
             //TODO: handle exception
